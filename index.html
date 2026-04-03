@@ -748,33 +748,17 @@ window.addEventListener('scroll',()=>{document.getElementById('progress-bar').st
   const btn=document.getElementById('music-btn');
   audio.volume=.3;
   let playing=false;
-  let pausedByVideo=false;
 
-  window._musicPlay=()=>{audio.play().then(()=>{playing=true;btn.textContent='⏸';}).catch(()=>{});};
-  window._musicPause=()=>{audio.pause();playing=false;btn.textContent='🎵';};
-
-  /* Toggle on button click */
   btn.addEventListener('click',()=>{
-    playing?window._musicPause():window._musicPlay();
-  });
-
-  /* Add click overlay on each video to detect play */
-  document.querySelectorAll('.video-wrapper').forEach(wrapper=>{
-    const overlay=document.createElement('div');
-    overlay.style.cssText='position:absolute;inset:0;z-index:10;cursor:pointer;';
-    wrapper.style.position='relative';
-    wrapper.appendChild(overlay);
-    overlay.addEventListener('click',()=>{
-      if(playing){window._musicPause();pausedByVideo=true;}
-      overlay.style.display='none';
-    });
-  });
-
-  /* Resume music and restore overlays when clicking outside video cards */
-  document.addEventListener('click',e=>{
-    if(!e.target.closest('.video-card')){
-      if(pausedByVideo){window._musicPlay();pausedByVideo=false;}
-      document.querySelectorAll('.video-wrapper div[style*="inset:0"]').forEach(o=>o.style.display='');
+    if(playing){
+      audio.pause();
+      playing=false;
+      btn.textContent='🎵';
+    } else {
+      audio.play().then(()=>{
+        playing=true;
+        btn.textContent='⏸';
+      }).catch(()=>{});
     }
   });
 })();
