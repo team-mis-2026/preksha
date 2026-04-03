@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Happy Birthday Preksha 🎉</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --pink: #f4a0b5; --rose: #e8799b; --peach: #f7c5a0;
+  --lavender: #c9b8e8; --lilac: #e6d9f7; --cream: #fef6f0;
+  --gold: #d4a853; --text-dark: #3a2d4a; --text-mid: #7a6080;
+  --glass: rgba(255,255,255,0.38); --glass-border: rgba(255,255,255,0.65);
+  --shadow: 0 8px 40px rgba(180,120,160,0.18);
+  --shadow-lg: 0 20px 60px rgba(180,120,160,0.28);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Poppins',sans-serif;background:var(--cream);color:var(--text-dark);overflow-x:hidden;}
+@media(pointer:fine){body{cursor:none;}}
+
+/* ── CURSOR ── */
+#cursor{position:fixed;width:14px;height:14px;background:var(--rose);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);mix-blend-mode:multiply;transition:transform .15s;display:none;}
+@media(pointer:fine){#cursor{display:block;}}
+#cursor-canvas{position:fixed;inset:0;pointer-events:none;z-index:99997;}
+
+/* ── LOADER ── */
+#loader{position:fixed;inset:0;z-index:999990;background:linear-gradient(135deg,#fde8f0,#f0e8fb 50%,#fde8e0);display:flex;align-items:center;justify-content:center;transition:opacity .9s,visibility .9s;}
+#loader.hidden{opacity:0;visibility:hidden;}
+.loader-content{text-align:center;}
+.loader-cake{font-size:80px;display:block;margin-bottom:20px;animation:loaderBounce 0.9s ease-in-out infinite alternate;}
+.loader-title{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4vw,2.4rem);color:var(--text-dark);margin-bottom:8px;}
+.loader-sub{font-size:13px;font-weight:300;color:var(--text-mid);letter-spacing:1px;margin-bottom:28px;}
+.loader-dots{display:flex;gap:10px;justify-content:center;}
+.loader-dots span{width:9px;height:9px;border-radius:50%;animation:dotPulse 1.2s ease-in-out infinite;}
+.loader-dots span:nth-child(1){background:var(--pink);}
+.loader-dots span:nth-child(2){background:var(--lavender);animation-delay:.2s;}
+.loader-dots span:nth-child(3){background:var(--peach);animation-delay:.4s;}
+
+/* ── PROGRESS ── */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--lavender),var(--peach));width:0%;z-index:9999;box-shadow:0 0 10px rgba(232,121,155,.5);transition:width .1s;}
+
+/* ── FIXED CONTROLS ── */
+.fixed-controls{position:fixed;top:16px;right:16px;z-index:9990;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.ctrl-btn{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--glass-border);background:rgba(255,255,255,.6);backdrop-filter:blur(14px);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,background .3s;}
+.ctrl-btn:hover{transform:scale(1.12);box-shadow:var(--shadow-lg);}
+.ctrl-btn.active{background:rgba(232,121,155,.25);}
+#music-viz{display:flex;align-items:flex-end;gap:3px;height:20px;opacity:0;transition:opacity .4s;padding:0 6px;}
+#music-viz.playing{opacity:1;}
+#music-viz span{width:3px;border-radius:2px;background:var(--rose);animation:vizBar .8s ease-in-out infinite alternate;}
+#music-viz span:nth-child(1){height:8px;animation-delay:0s;}
+#music-viz span:nth-child(2){height:15px;animation-delay:.12s;}
+#music-viz span:nth-child(3){height:10px;animation-delay:.24s;}
+#music-viz span:nth-child(4){height:18px;animation-delay:.08s;}
+#music-viz span:nth-child(5){height:6px;animation-delay:.2s;}
+
+/* ── WATERMARK ── */
+#watermark{position:fixed;bottom:16px;right:16px;z-index:9000;background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.75);backdrop-filter:blur(14px);border-radius:50px;padding:6px 16px;font-size:11px;font-weight:600;color:var(--text-mid);letter-spacing:.5px;box-shadow:0 4px 16px rgba(180,100,140,.12);}
+#watermark span{color:var(--rose);}
+
+/* ── CANVASES ── */
+#confetti-canvas,#petal-canvas{position:fixed;inset:0;pointer-events:none;z-index:99990;}
+
+/* ── LIGHTBOX ── */
+#lightbox{position:fixed;inset:0;background:rgba(30,10,40,.93);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(12px);}
+#lightbox.active{display:flex;}
+#lightbox img{max-width:90vw;max-height:85vh;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+#lightbox-close{position:absolute;top:20px;right:24px;font-size:34px;color:white;cursor:pointer;background:none;border:none;opacity:.8;transition:opacity .2s,transform .3s;}
+#lightbox-close:hover{opacity:1;transform:rotate(90deg);}
+
+/* ── SECTIONS ── */
+section{padding:90px 20px;}
+.section-inner{max-width:960px;margin:0 auto;}
+.section-label{font-size:10px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--rose);margin-bottom:12px;display:block;}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:600;color:var(--text-dark);margin-bottom:40px;}
+.petal-div{text-align:center;font-size:20px;letter-spacing:8px;color:var(--pink);margin:0 0 48px;}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:none;}
+.reveal-d1{transition-delay:.1s;}.reveal-d2{transition-delay:.2s;}.reveal-d3{transition-delay:.3s;}.reveal-d4{transition-delay:.4s;}
+
+/* ── HERO ── */
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:linear-gradient(135deg,#fde8f0 0%,#f0e8fb 35%,#fde8e0 70%,#f9edf6 100%);text-align:center;padding:40px 20px;}
+#hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 20% 30%,rgba(244,160,181,.3) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 70%,rgba(201,184,232,.3) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 50% 10%,rgba(247,197,160,.25) 0%,transparent 60%);pointer-events:none;}
+#hero-canvas{position:absolute;inset:0;pointer-events:none;}
+.hero-badge{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rose);background:rgba(255,255,255,.5);border:1px solid rgba(232,121,155,.3);padding:8px 22px;border-radius:50px;margin-bottom:28px;backdrop-filter:blur(8px);animation:fadeSlideDown 1s ease both;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,7vw,5.5rem);font-weight:700;line-height:1.15;color:var(--text-dark);margin-bottom:18px;animation:fadeSlideUp 1s .2s ease both;}
+.hero-title .accent{color:var(--rose);font-style:italic;}
+.hero-sub{font-size:clamp(.9rem,2vw,1.1rem);font-weight:300;color:var(--text-mid);letter-spacing:1px;animation:fadeSlideUp 1s .4s ease both;margin-bottom:20px;}
+.hero-tagline{font-family:'Dancing Script',cursive;font-size:clamp(1.1rem,2.5vw,1.6rem);color:var(--rose);margin-bottom:44px;animation:fadeSlideUp 1s .65s ease both;}
+.hero-scroll{animation:fadeSlideUp 1s .85s ease both,bounce 2s 2s infinite;font-size:22px;color:var(--rose);}
+
+/* ── TYPING MSG ── */
+#message-section{background:linear-gradient(135deg,#fdf0f6,#f4edfb);}
+.message-card{background:var(--glass);border:1.5px solid var(--glass-border);border-radius:28px;padding:50px 48px;backdrop-filter:blur(20px);box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
+.message-card::before{content:'"';font-family:'Playfair Display',serif;font-size:180px;color:rgba(232,121,155,.07);position:absolute;top:-20px;left:20px;line-height:1;pointer-events:none;}
+#typing-line{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.2rem,2.5vw,1.6rem);color:var(--rose);margin-bottom:24px;min-height:2em;}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--rose);animation:blink .7s infinite;vertical-align:middle;margin-left:2px;}
+#message-body{font-size:clamp(.95rem,1.8vw,1.1rem);line-height:1.9;color:var(--text-mid);opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s;}
+#message-body.visible{opacity:1;transform:none;}
+@media(max-width:600px){.message-card{padding:32px 24px;}}
+
+/* ── LOVE LETTER ── */
+#letter-section{background:var(--cream);text-align:center;}
+.envelope-outer{display:inline-block;position:relative;cursor:pointer;margin-top:10px;}
+.envelope{width:280px;height:190px;position:relative;transition:transform .3s;}
+.envelope:hover{transform:scale(1.03);}
+.env-body{width:280px;height:190px;background:linear-gradient(135deg,#fce4ec,#f8bbd0);border-radius:6px 6px 14px 14px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
+.env-flap{width:0;height:0;border-left:140px solid transparent;border-right:140px solid transparent;border-top:95px solid #f48fb1;position:absolute;top:0;left:0;transform-origin:top center;transition:transform .7s cubic-bezier(.34,1.56,.64,1);z-index:2;}
+.envelope-outer.opened .env-flap{transform:rotateX(-180deg);}
+.env-bottom{width:0;height:0;border-left:140px solid #f9a8c9;border-right:140px solid #f9a8c9;border-top:95px solid transparent;position:absolute;bottom:0;left:0;}
+.env-left{width:0;height:0;border-bottom:95px solid #f48fb1;border-right:140px solid transparent;position:absolute;bottom:0;left:0;}
+.env-right{width:0;height:0;border-bottom:95px solid #f48fb1;border-left:140px solid transparent;position:absolute;bottom:0;right:0;}
+.env-heart{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:34px;z-index:3;transition:opacity .3s;}
+.envelope-outer.opened .env-heart{opacity:0;}
+.env-hint{font-size:12px;color:var(--text-mid);margin-top:14px;letter-spacing:1px;animation:pulse 2s infinite;}
+
+/* Letter modal — fixed overlay, never touches any other element */
+#letter-modal{position:fixed;inset:0;z-index:999997;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .45s,visibility .45s;}
+#letter-modal.active{opacity:1;visibility:visible;}
+#letter-modal-bg{position:absolute;inset:0;background:rgba(30,15,45,.75);backdrop-filter:blur(14px);cursor:pointer;}
+.letter-paper{position:relative;z-index:2;width:min(340px,92vw);max-height:80vh;overflow:hidden;background:#fffaf9;border-radius:24px;padding:0;box-shadow:0 30px 80px rgba(100,40,80,.35);transform:scale(.82) translateY(24px);transition:transform .55s cubic-bezier(.34,1.56,.64,1),opacity .45s;opacity:0;}
+.letter-scroll{overflow-y:auto;max-height:80vh;padding:38px 34px 32px;}
+.letter-scroll::-webkit-scrollbar{width:5px;}
+.letter-scroll::-webkit-scrollbar-track{background:transparent;border-radius:24px;}
+.letter-scroll::-webkit-scrollbar-thumb{background:rgba(232,121,155,.35);border-radius:24px;}
+.letter-scroll::-webkit-scrollbar-thumb:hover{background:rgba(232,121,155,.6);}
+#letter-modal.active .letter-paper{transform:scale(1) translateY(0);opacity:1;}
+.letter-paper p{font-family:'Dancing Script',cursive;font-size:1.08rem;color:var(--text-mid);line-height:1.85;text-align:left;}
+.letter-sign{margin-top:14px;text-align:right;font-size:1rem;color:var(--rose);font-weight:700;}
+.letter-close-btn{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:rgba(232,121,155,.12);border:none;font-size:14px;color:var(--text-mid);cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.7;transition:opacity .2s,transform .3s,background .2s;}
+.letter-close-btn:hover{opacity:1;transform:rotate(90deg);background:rgba(232,121,155,.25);}
+
+/* ── POLAROID CAROUSEL ── */
+#gallery-section{background:linear-gradient(135deg,#fdf0f6,#f4edfb);}
+.carousel-outer{position:relative;overflow:hidden;border-radius:20px;}
+.carousel-track{display:flex;gap:24px;transition:transform .5s cubic-bezier(.77,0,.175,1);padding:30px 10px;}
+.polaroid{flex:0 0 240px;background:white;padding:14px 14px 52px;box-shadow:0 8px 32px rgba(180,100,140,.18);border-radius:4px;cursor:pointer;transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s;position:relative;}
+.polaroid:nth-child(odd){transform:rotate(-2deg);}
+.polaroid:nth-child(even){transform:rotate(1.5deg);}
+.polaroid:hover{transform:rotate(0deg) scale(1.06) translateY(-8px)!important;box-shadow:0 22px 52px rgba(180,100,140,.32);}
+.polaroid img{width:100%;aspect-ratio:3/4;object-fit:contain;object-position:center;display:block;border-radius:2px;background:#f9f9f9;}
+.polaroid-caption{font-family:'Dancing Script',cursive;font-size:1rem;color:var(--text-mid);text-align:center;position:absolute;bottom:14px;left:0;right:0;}
+.carousel-controls{display:flex;justify-content:center;gap:12px;margin-top:24px;align-items:center;}
+.carousel-btn{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--glass-border);background:rgba(255,255,255,.75);backdrop-filter:blur(8px);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:all .3s;color:var(--text-dark);}
+.carousel-btn:hover{background:var(--rose);color:white;transform:scale(1.1);}
+.carousel-dots{display:flex;gap:8px;align-items:center;}
+.carousel-dot{width:8px;height:8px;border-radius:50%;background:rgba(232,121,155,.3);cursor:pointer;transition:all .3s;}
+.carousel-dot.active{background:var(--rose);transform:scale(1.3);}
+
+/* ── VIDEO ── */
+#video-section{background:var(--cream);}
+.video-grid{display:grid;grid-template-columns:1fr;gap:24px;}
+@media(min-width:640px){.video-grid{grid-template-columns:repeat(2,1fr);}}
+.video-card{background:var(--glass);border:1.5px solid var(--glass-border);border-radius:22px;overflow:hidden;backdrop-filter:blur(16px);box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s;}
+.video-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+.video-wrapper{position:relative;padding-bottom:56.25%;background:linear-gradient(135deg,#f4d0de,#e6d9f7);}
+.video-wrapper iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text-mid);font-size:14px;font-weight:500;}
+.play-icon{width:58px;height:58px;background:rgba(255,255,255,.75);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 20px rgba(180,100,140,.2);}
+.video-caption{padding:16px 20px;font-size:13px;font-weight:500;color:var(--text-mid);text-align:center;}
+
+/* ── FLIP CARDS ── */
+#flip-section{background:linear-gradient(135deg,#fdf0f6,#f4edfb);}
+.flip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media(max-width:700px){.flip-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:480px){.flip-grid{grid-template-columns:repeat(2,1fr);}}
+.flip-card{perspective:900px;aspect-ratio:1;cursor:pointer;}
+.flip-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.77,0,.175,1);border-radius:18px;}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-front,.flip-back{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;text-align:center;box-shadow:var(--shadow);}
+.flip-front{background:linear-gradient(135deg,var(--pink),var(--lavender));color:white;}
+.flip-back{background:white;transform:rotateY(180deg);border:1.5px solid var(--glass-border);}
+.flip-num{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;opacity:.88;}
+.flip-tap{font-size:9px;letter-spacing:2px;text-transform:uppercase;opacity:.7;margin-top:4px;}
+.flip-emoji{font-size:26px;margin-bottom:7px;}
+.flip-reason{font-size:clamp(.65rem,1.4vw,.82rem);font-weight:600;color:var(--text-dark);line-height:1.4;}
+.flip-sub{font-size:.65rem;color:var(--text-mid);margin-top:4px;line-height:1.3;}
+
+/* ── MEMORIES ── */
+#memory-section{background:var(--cream);}
+.memory-grid{display:grid;gap:22px;grid-template-columns:1fr;}
+@media(min-width:640px){.memory-grid{grid-template-columns:repeat(2,1fr);}}
+.memory-card{background:var(--glass);border:1.5px solid var(--glass-border);border-radius:24px;padding:36px 32px;backdrop-filter:blur(16px);box-shadow:var(--shadow);position:relative;overflow:hidden;opacity:0;transform:translateY(30px);transition:opacity .7s,transform .7s,box-shadow .3s;}
+.memory-card.visible{opacity:1;transform:none;}
+.memory-card:hover{box-shadow:var(--shadow-lg);}
+.memory-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--lavender),var(--peach));}
+.memory-emoji{font-size:36px;margin-bottom:16px;display:block;}
+.memory-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600;color:var(--text-dark);margin-bottom:10px;}
+.memory-text{font-size:.9rem;line-height:1.7;color:var(--text-mid);}
+
+/* ── BALLOON GAME ── */
+#balloon-section{background:linear-gradient(135deg,#fdf0f6,#f4edfb);}
+.balloon-arena{position:relative;height:400px;overflow:hidden;border-radius:24px;background:linear-gradient(180deg,rgba(255,255,255,.25),rgba(255,255,255,.05));border:1.5px solid var(--glass-border);backdrop-filter:blur(8px);}
+.balloon{position:absolute;bottom:-130px;cursor:pointer;animation:floatUp var(--dur,6s) linear forwards;user-select:none;}
+.balloon-body{width:var(--bw,70px);height:calc(var(--bw,70px)*1.25);border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;background:var(--bc,#f48fb1);display:flex;align-items:center;justify-content:center;box-shadow:inset -8px -8px 20px rgba(0,0,0,.1),inset 4px 4px 12px rgba(255,255,255,.4);position:relative;}
+.balloon-knot{width:6px;height:6px;background:var(--bc,#f48fb1);border-radius:50%;position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);}
+.balloon-string{width:1px;height:65px;background:rgba(150,100,120,.35);position:absolute;bottom:-68px;left:50%;transform:translateX(-50%);}
+.balloon-msg{font-size:9px;font-weight:700;color:rgba(255,255,255,.95);text-align:center;padding:0 8px;line-height:1.3;pointer-events:none;}
+.balloon.popped{animation:popBalloon .4s ease forwards!important;}
+.pop-spark{position:absolute;font-size:22px;pointer-events:none;animation:sparkFly .6s ease forwards;z-index:10;}
+.balloon-score{text-align:center;margin-top:18px;font-size:14px;color:var(--text-mid);}
+.balloon-score span{color:var(--rose);font-weight:700;font-size:20px;}
+.spawn-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:50px;border:1.5px solid rgba(232,121,155,.4);background:rgba(255,255,255,.7);backdrop-filter:blur(8px);color:var(--text-dark);font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);transition:all .3s;margin-top:16px;}
+.spawn-btn:hover{background:var(--rose);color:white;border-color:var(--rose);}
+
+/* ── COUNTDOWN ── */
+#countdown-section{background:linear-gradient(135deg,#f9edf6,#fde8e0);text-align:center;}
+.countdown-wrap{display:flex;justify-content:center;gap:clamp(12px,3vw,32px);flex-wrap:wrap;margin-top:10px;}
+.countdown-box{background:var(--glass);border:1.5px solid var(--glass-border);border-radius:20px;padding:28px 24px;min-width:90px;backdrop-filter:blur(16px);box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.countdown-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--lavender));}
+.countdown-num{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:var(--rose);display:block;line-height:1;margin-bottom:8px;}
+.countdown-lbl{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);}
+.bday-msg{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.4rem,3vw,2rem);color:var(--rose);animation:pulse 2s ease-in-out infinite;}
+
+/* ── ZODIAC ── */
+#zodiac-section{background:var(--cream);}
+.zodiac-card{background:var(--glass);border:1.5px solid var(--glass-border);border-radius:28px;padding:52px 40px;backdrop-filter:blur(20px);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;overflow:hidden;}
+.zodiac-card::before{content:'♈\FE0E';font-size:220px;color:rgba(232,121,155,.05);position:absolute;top:-50px;right:-20px;pointer-events:none;line-height:1;}
+.zodiac-sym{font-size:68px;margin-bottom:14px;}
+.zodiac-name{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;}
+.zodiac-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-bottom:32px;}
+.zodiac-traits{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:30px;}
+.trait-pill{padding:8px 18px;border-radius:50px;background:linear-gradient(135deg,rgba(244,160,181,.22),rgba(201,184,232,.22));border:1px solid rgba(232,121,155,.28);font-size:13px;font-weight:500;color:var(--text-dark);transition:all .3s;cursor:default;}
+.trait-pill:hover{background:linear-gradient(135deg,var(--pink),var(--lavender));color:white;transform:translateY(-2px);box-shadow:0 4px 16px rgba(232,121,155,.32);}
+.zodiac-desc{font-size:.95rem;line-height:1.85;color:var(--text-mid);max-width:580px;}
+
+/* ── WISH WALL ── */
+#wish-section{background:linear-gradient(135deg,#fdf0f6,#f4edfb);}
+.wish-row{display:flex;gap:12px;max-width:560px;margin:0 auto 36px;flex-wrap:wrap;}
+.wish-input{flex:1;min-width:200px;padding:14px 20px;border-radius:50px;border:1.5px solid rgba(232,121,155,.3);background:rgba(255,255,255,.75);backdrop-filter:blur(8px);font-family:'Poppins',sans-serif;font-size:.9rem;color:var(--text-dark);outline:none;transition:border-color .3s,box-shadow .3s;}
+.wish-input:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(232,121,155,.15);}
+.wish-btn{padding:14px 28px;border-radius:50px;border:none;background:linear-gradient(135deg,var(--rose),var(--lavender));color:white;font-family:'Poppins',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(232,121,155,.35);transition:transform .3s,box-shadow .3s;}
+.wish-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,121,155,.45);}
+.wish-display{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;min-height:80px;}
+.wish-bubble{background:white;border:1.5px solid rgba(232,121,155,.25);border-radius:50px;padding:10px 20px;font-size:13px;color:var(--text-mid);box-shadow:var(--shadow);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;display:flex;align-items:center;gap:6px;}
+.wish-bubble::before{content:'💝';font-size:14px;}
+.wish-empty-msg{width:100%;text-align:center;font-size:13px;color:var(--text-mid);font-style:italic;padding:24px;}
+
+/* ── SURPRISE ── */
+#surprise-section{background:var(--cream);text-align:center;}
+#surprise-btn{display:inline-flex;align-items:center;gap:10px;padding:18px 46px;border-radius:50px;border:none;background:linear-gradient(135deg,var(--rose),var(--lavender));color:white;font-family:'Poppins',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;box-shadow:0 8px 30px rgba(232,121,155,.42);transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;margin-bottom:40px;letter-spacing:.5px;}
+#surprise-btn:hover{transform:scale(1.07) translateY(-3px);box-shadow:0 18px 44px rgba(232,121,155,.52);}
+#surprise-msg{display:none;animation:popIn .6s cubic-bezier(.34,1.56,.64,1) both;}
+#surprise-msg.active{display:block;}
+.surprise-inner{background:var(--glass);border:1.5px solid var(--glass-border);border-radius:28px;padding:52px 40px;backdrop-filter:blur(20px);box-shadow:var(--shadow-lg);max-width:500px;margin:0 auto;}
+.surprise-emoji{font-size:54px;margin-bottom:18px;display:block;}
+.surprise-text{font-family:'Playfair Display',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-style:italic;color:var(--text-dark);line-height:1.55;}
+
+footer{text-align:center;padding:44px 20px;background:linear-gradient(135deg,#fde8f0,#f0e8fb);font-size:13px;color:var(--text-mid);letter-spacing:.5px;}
+footer .hearts{font-size:20px;letter-spacing:6px;}
+
+/* ── KEYFRAMES ── */
+@keyframes fadeSlideDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.65}}
+@keyframes popIn{from{opacity:0;transform:scale(.78)}to{opacity:1;transform:scale(1)}}
+@keyframes floatAnim{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+@keyframes loaderBounce{from{transform:scale(1) translateY(0)}to{transform:scale(1.12) translateY(-12px)}}
+@keyframes dotPulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.45);opacity:1}}
+@keyframes vizBar{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+@keyframes flicker{from{transform:translateX(-50%) scaleX(1)}to{transform:translateX(-50%) scaleX(.88) scaleY(1.06)}}
+@keyframes smokeUp{0%{height:0;opacity:.7}100%{height:28px;opacity:0;transform:translateX(-50%) translateY(-24px)}}
+@keyframes floatUp{0%{bottom:-130px;transform:rotate(var(--sw,0deg))}50%{transform:rotate(calc(var(--sw,0deg)*-1))}100%{bottom:110%;transform:rotate(var(--sw,0deg))}}
+@keyframes popBalloon{0%{transform:scale(1);opacity:1}35%{transform:scale(1.5)}100%{transform:scale(0);opacity:0}}
+@keyframes sparkFly{0%{transform:scale(.5);opacity:1}100%{transform:scale(2.8) translateY(-20px);opacity:0}}
+
+/* ── LOCK SCREEN ── */
+#lock-screen{position:fixed;inset:0;z-index:999985;background:linear-gradient(135deg,#fde8f0 0%,#f0e8fb 35%,#fde8e0 70%,#f9edf6 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;transition:opacity 1.4s ease,visibility 1.4s ease;overflow:hidden;}
+#lock-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 20% 30%,rgba(244,160,181,.3) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 70%,rgba(201,184,232,.3) 0%,transparent 60%);pointer-events:none;}
+#lock-screen.unlocked{opacity:0;visibility:hidden;pointer-events:none;}
+.lock-inner{position:relative;z-index:1;max-width:560px;width:100%;}
+.lock-lock{font-size:70px;margin-bottom:16px;animation:loaderBounce .9s ease-in-out infinite alternate;display:block;}
+.lock-badge{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rose);background:rgba(255,255,255,.55);border:1px solid rgba(232,121,155,.3);padding:8px 22px;border-radius:50px;margin-bottom:24px;display:inline-block;backdrop-filter:blur(8px);}
+.lock-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:700;color:var(--text-dark);line-height:1.2;margin-bottom:12px;}
+.lock-title .accent{color:var(--rose);font-style:italic;}
+.lock-sub{font-family:'Dancing Script',cursive;font-size:clamp(1rem,2.5vw,1.4rem);color:var(--text-mid);margin-bottom:36px;}
+.lock-cd-wrap{display:flex;justify-content:center;gap:clamp(10px,2.5vw,24px);flex-wrap:wrap;margin-bottom:36px;}
+.lock-cd-box{background:rgba(255,255,255,.65);border:1.5px solid rgba(255,255,255,.85);border-radius:18px;padding:22px 18px;min-width:80px;backdrop-filter:blur(18px);box-shadow:0 8px 32px rgba(180,120,160,.18);position:relative;overflow:hidden;}
+.lock-cd-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--pink),var(--lavender));}
+.lock-cd-num{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;color:var(--rose);display:block;line-height:1;margin-bottom:6px;}
+.lock-cd-lbl{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);}
+.lock-hint{font-size:12px;color:var(--text-mid);letter-spacing:.5px;animation:pulse 2s infinite;}
+.lock-hint .lock-date{color:var(--rose);font-weight:600;}
+.lock-particles-canvas{position:absolute;inset:0;pointer-events:none;}
+#main-content{opacity:0;transition:opacity 1.2s ease .3s;}
+#main-content.revealed{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-content">
+    <span class="loader-cake">🎂</span>
+    <div class="loader-title">Happy Birthday Preksha</div>
+    <div class="loader-sub">Preparing something magical just for you...</div>
+    <div class="loader-dots"><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<!-- FIXED OVERLAYS -->
+<div id="progress-bar"></div>
+<div id="cursor"></div>
+<canvas id="cursor-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+<canvas id="petal-canvas"></canvas>
+<div id="watermark">Made with <span>♥</span> by SKR</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lightbox-close">✕</button>
+  <img id="lightbox-img" src="" alt="Photo"/>
+</div>
+
+<!-- FIXED CONTROLS -->
+<div class="fixed-controls">
+</div>
+
+<!-- ═══════════ LOCK SCREEN ═══════════ -->
+<div id="lock-screen">
+  <canvas class="lock-particles-canvas" id="lock-particles-canvas"></canvas>
+  <div class="lock-inner">
+    <span class="lock-lock">🎂</span>
+    <div class="lock-badge">✨ Something special is waiting ✨</div>
+    <h1 class="lock-title">A gift for<br/><span class="accent">Preksha</span> 🌸</h1>
+    <p class="lock-sub">Unlocks when the clock strikes midnight...</p>
+    <div class="lock-cd-wrap">
+      <div class="lock-cd-box"><span class="lock-cd-num" id="lk-hours">--</span><span class="lock-cd-lbl">Hours</span></div>
+      <div class="lock-cd-box"><span class="lock-cd-num" id="lk-mins">--</span><span class="lock-cd-lbl">Minutes</span></div>
+      <div class="lock-cd-box"><span class="lock-cd-num" id="lk-secs">--</span><span class="lock-cd-lbl">Seconds</span></div>
+    </div>
+    <p class="lock-hint">🔒 Full surprise reveals on <span class="lock-date">4th April at 12:00 AM</span></p>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN CONTENT ═══════════ -->
+<div id="main-content">
+<section id="countdown-section">
+  <div class="section-inner">
+    <span class="section-label reveal">Tick tock...</span>
+    <h2 class="section-title reveal">Countdown to the Big Day 🎂</h2>
+    <div id="countdown-display" class="countdown-wrap reveal reveal-d1">
+      <div class="countdown-box"><span class="countdown-num" id="cd-days">--</span><span class="countdown-lbl">Days</span></div>
+      <div class="countdown-box"><span class="countdown-num" id="cd-hours">--</span><span class="countdown-lbl">Hours</span></div>
+      <div class="countdown-box"><span class="countdown-num" id="cd-mins">--</span><span class="countdown-lbl">Minutes</span></div>
+      <div class="countdown-box"><span class="countdown-num" id="cd-secs">--</span><span class="countdown-lbl">Seconds</span></div>
+    </div>
+    <div id="bday-now" class="bday-msg" style="display:none;margin-top:30px;">🎉 Today is the day! Happy Birthday Preksha! 🎉</div>
+  </div>
+</section>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-badge">✨ 4th April · A Day to Remember ✨</div>
+  <h1 class="hero-title">Happy <span class="accent">22nd</span><br/>Birthday Preksha 🎉</h1>
+  <p class="hero-sub">Celebrating someone truly, wonderfully special</p>
+  <p class="hero-tagline">"The world is so much better with you in it 🌸"</p>
+  <div class="hero-scroll">↓</div>
+</section>
+
+<!-- ═══════════ TIME CAPSULE ═══════════ -->
+<section id="message-section">
+  <div class="section-inner">
+    <span class="section-label">Sealed with love</span>
+    <h2 class="section-title">A Little Time Capsule 💌</h2>
+    <div class="message-card">
+      <div id="typing-line"><span id="typed-text"></span><span class="cursor"></span></div>
+      <p id="message-body">22 feels big and small at the same time. Big because you're stepping into a version of yourself you haven't fully met yet. Small because looking back, it all went so fast.<br/><br/>You've already lived so many good moments, the ones that made you laugh till your stomach hurt, the ones that were hard but made you stronger. And yet, the best ones? Still ahead. Tujhe pata bhi nahi hai ki aage kya kya hai tere liye.<br/><br/>So whenever life feels heavy, open this. Remember who you were at 22, already so full of light, so full of potential, so genuinely loved. That person never goes away. She just keeps growing. 🌸</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ LOVE LETTER ═══════════ -->
+<section id="letter-section">
+  <div class="section-inner">
+    <span class="section-label reveal">Something just for you</span>
+    <h2 class="section-title reveal reveal-d1">Open your letter 💌</h2>
+    <div style="display:flex;justify-content:center;" class="reveal reveal-d2">
+      <div class="envelope-outer" id="envelope">
+        <div class="envelope">
+          <div class="env-body">
+            <div class="env-flap"></div>
+            <div class="env-bottom"></div>
+            <div class="env-left"></div>
+            <div class="env-right"></div>
+            <div class="env-heart">💌</div>
+          </div>
+        </div>
+        <div class="env-hint" id="env-hint">✉️ Click to open</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LETTER MODAL — fixed overlay, completely isolated from page layout -->
+<div id="letter-modal">
+  <div id="letter-modal-bg"></div>
+  <div class="letter-paper">
+    <div class="letter-scroll">
+    <button class="letter-close-btn" id="letter-close">✕</button>
+    <p>To the most wonderful Preksha,<br/><br/>On this special day, bas yahi kehna hai, you are one of those rare people who make everything around them better just by being there. Genuinely.<br/><br/>Your smile, your energy, the way you carry yourself, it's something else yaar. Har ek moment with you feels like a memory worth keeping forever.<br/><br/>On your 22nd, I hope this year gives you everything you deserve and trust me, tu bahut kuch deserve karti hai. Stay exactly the way you are. 🌸</p>
+    <p class="letter-sign">SKR 💕</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PHOTO CAROUSEL ═══════════ -->
+<section id="gallery-section">
+  <div class="section-inner">
+    <span class="section-label reveal">Beautiful Moments</span>
+    <h2 class="section-title reveal reveal-d1">Moments & Memories 🌷</h2>
+    <div class="carousel-outer">
+      <div class="carousel-track" id="carousel-track">
+        <div class="polaroid" data-src="https://i.ibb.co/KpTwySZf/IMG-20260402-WA0021.jpg"><img src="https://i.ibb.co/KpTwySZf/IMG-20260402-WA0021.jpg" alt="Memory 1"/><div class="polaroid-caption">Always smiling 🌸</div></div>
+        <div class="polaroid" data-src="https://i.ibb.co/tpyw5z8Q/IMG-20260402-WA0022.jpg"><img src="https://i.ibb.co/tpyw5z8Q/IMG-20260402-WA0022.jpg" alt="Memory 2"/><div class="polaroid-caption">Pure joy ✨</div></div>
+        <div class="polaroid" data-src="https://i.ibb.co/xqwPqsgm/IMG-20260402-WA0019.jpg"><img src="https://i.ibb.co/xqwPqsgm/IMG-20260402-WA0019.jpg" alt="Memory 3"/><div class="polaroid-caption">Unforgettable 💕</div></div>
+        <div class="polaroid" data-src="https://i.ibb.co/sp4ZBHFf/IMG-20260402-WA0020.jpg"><img src="https://i.ibb.co/sp4ZBHFf/IMG-20260402-WA0020.jpg" alt="Memory 4"/><div class="polaroid-caption">Forever cherished 🎀</div></div>
+        <div class="polaroid" data-src="https://i.ibb.co/DH65D4mN/IMG-20260402-WA0018.jpg"><img src="https://i.ibb.co/DH65D4mN/IMG-20260402-WA0018.jpg" alt="Memory 5"/><div class="polaroid-caption">The best days 💫</div></div>
+        <div class="polaroid" data-src="https://i.ibb.co/cKmZbkLM/IMG-20260402-WA0017.jpg"><img src="https://i.ibb.co/cKmZbkLM/IMG-20260402-WA0017.jpg" alt="Memory 6"/><div class="polaroid-caption">Blessed moments 🌺</div></div>
+        <div class="polaroid" data-src="https://i.ibb.co/KprPYxkq/IMG-20260402-WA0016.jpg"><img src="https://i.ibb.co/KprPYxkq/IMG-20260402-WA0016.jpg" alt="Memory 7"/><div class="polaroid-caption">More to come 💖</div></div>
+        <div class="polaroid" data-src="https://i.ibb.co/ytmrw6j/IMG-20260402-WA0015.jpg"><img src="https://i.ibb.co/ytmrw6j/IMG-20260402-WA0015.jpg" alt="Memory 8"/><div class="polaroid-caption">Simply beautiful 🎀</div></div>
+      </div>
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" id="car-prev">&#8592;</button>
+      <button class="carousel-btn" id="car-next">&#8594;</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ VIDEO SECTION ═══════════ -->
+<section id="video-section">
+  <div class="section-inner">
+    <span class="section-label reveal">From people who love you</span>
+    <h2 class="section-title reveal reveal-d1">Video Messages 🎬</h2>
+    <div class="video-grid">
+      <div class="video-card reveal reveal-d1"><div class="video-wrapper"><iframe src="https://drive.google.com/file/d/1-NgLqET4828yrrp0gNpvn2kdu4wcuBcM/preview" allowfullscreen></iframe></div><div class="video-caption">A little message for you 💖</div></div>
+      <div class="video-card reveal reveal-d2"><div class="video-wrapper"><iframe src="https://drive.google.com/file/d/1k3UTONThqtRFkI10ZqoQWjRE1FhNGXxv/preview" allowfullscreen></iframe></div><div class="video-caption">Wishing you the best 🌸</div></div>
+      <div class="video-card reveal reveal-d3"><div class="video-wrapper"><iframe src="https://drive.google.com/file/d/1kiUJcyJoupPAWQNtmFwesl1mm4LuPNKu/preview" allowfullscreen></iframe></div><div class="video-caption">Sending all my love 🎀</div></div>
+      <div class="video-card reveal reveal-d4"><div class="video-wrapper"><iframe src="https://drive.google.com/file/d/12ue8ZJ56idNt27GPyAE8d2IPUrsJlNo8/preview" allowfullscreen></iframe></div><div class="video-caption">You're amazing ✨</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FLIP CARDS ═══════════ -->
+<section id="flip-section">
+  <div class="section-inner">
+    <span class="section-label reveal">Tap each card</span>
+    <h2 class="section-title reveal reveal-d1">12 Reasons We Love Preksha 💖</h2>
+    <div class="petal-div">🌸 🌺 🌸</div>
+    <div class="flip-grid" id="flip-grid"></div>
+  </div>
+</section>
+
+<!-- ═══════════ ZODIAC ═══════════ -->
+<section id="zodiac-section">
+  <div class="section-inner">
+    <span class="section-label reveal">Written in the stars</span>
+    <h2 class="section-title reveal reveal-d1">Born Under Aries ♈</h2>
+    <div class="zodiac-card reveal reveal-d2">
+      <div class="zodiac-sym">♈&#xFE0E;</div>
+      <div class="zodiac-name">Aries</div>
+      <div class="zodiac-sub">March 21 – April 19 · Fire Sign · Born April 4th</div>
+      <div class="zodiac-traits">
+        <span class="trait-pill">🔥 Bold &amp; Brave</span>
+        <span class="trait-pill">💫 Natural Leader</span>
+        <span class="trait-pill">❤️ Passionate</span>
+        <span class="trait-pill">⚡ Full of Energy</span>
+        <span class="trait-pill">🌟 Ambitious</span>
+        <span class="trait-pill">🎯 Determined</span>
+        <span class="trait-pill">😄 Adventurous</span>
+        <span class="trait-pill">🌸 Warm-Hearted</span>
+      </div>
+      <p class="zodiac-desc">Aries is the first sign of the zodiac — a pioneer, a leader, a dreamer. Born on April 4th, Preksha carries the fiery spirit of Aries: passionate about life, fearless in the face of challenge, and absolutely magnetic to everyone around her. The stars truly outdid themselves the day she was born. ✨</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SURPRISE ═══════════ -->
+<section id="surprise-section">
+  <div class="section-inner">
+    <span class="section-label reveal">Psst...</span>
+    <h2 class="section-title reveal reveal-d1">One last surprise 🎁</h2>
+    <button id="surprise-btn">Click for Surprise 🎁</button>
+    <div id="surprise-msg">
+      <div class="surprise-inner">
+        <span class="surprise-emoji">❤️✨</span>
+        <p class="surprise-text">"You are loved more than words can ever say."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="hearts">🌸 💕 🌸 💕 🌸</div>
+  <p style="margin-top:14px;">Made with love for <strong>Preksha</strong> · 4th April · By SKR</p>
+</footer>
+
+</div><!-- /#main-content -->
+
+<audio id="bg-music" loop>
+  <source src="https://files.catbox.moe/9i3316.mp3" type="audio/mpeg"/>
+</audio>
+
+<script>
+/* ════ LOADER ════ */
+setTimeout(()=>document.getElementById('loader').classList.add('hidden'),1500);
+
+/* ════ CUSTOM CURSOR ════ */
+(()=>{
+  const cur=document.getElementById('cursor');
+  const canvas=document.getElementById('cursor-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,pts=[];
+  const resize=()=>{W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;};
+  resize();window.addEventListener('resize',resize);
+  const CHARS=['✦','·','✧','♥','✿','❀'];
+  const COLS=['#f4a0b5','#c9b8e8','#f7c5a0','#e8799b','#d4a853'];
+  let mx=-200,my=-200;
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    cur.style.left=mx+'px';cur.style.top=my+'px';
+    for(let i=0;i<3;i++) pts.push({x:mx,y:my,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3-1,size:3+Math.random()*6,op:1,decay:.025+Math.random()*.02,col:COLS[~~(Math.random()*COLS.length)],ch:CHARS[~~(Math.random()*CHARS.length)]});
+  });
+  (function loop(){
+    ctx.clearRect(0,0,W,H);
+    pts=pts.filter(p=>p.op>0.04);
+    pts.forEach(p=>{ctx.globalAlpha=p.op;ctx.fillStyle=p.col;ctx.font=`${p.size*2.5}px Arial`;ctx.fillText(p.ch,p.x,p.y);p.x+=p.vx;p.y+=p.vy;p.vy+=0.06;p.op-=p.decay;});
+    ctx.globalAlpha=1;requestAnimationFrame(loop);
+  })();
+})();
+
+/* ════ SCROLL PROGRESS ════ */
+window.addEventListener('scroll',()=>{document.getElementById('progress-bar').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';});
+
+/* ════ HERO CANVAS ════ */
+(()=>{
+  const cv=document.getElementById('hero-canvas');
+  const ctx=cv.getContext('2d');
+  let ps=[];
+  const resize=()=>{cv.width=cv.offsetWidth;cv.height=cv.offsetHeight;};
+  window.addEventListener('resize',resize);resize();
+  const SYM=['♥','✦','✿','❀','·','✧','♡'];
+  const COL=['#f4a0b5','#c9b8e8','#f7c5a0','#e8799b','#f9c8d9','#d4b8f0'];
+  const sp=()=>({x:Math.random()*cv.width,y:cv.height+20,vx:(Math.random()-.5)*.7,vy:-(0.7+Math.random()*1.3),sz:12+Math.random()*22,op:.5+Math.random()*.5,sym:SYM[~~(Math.random()*SYM.length)],col:COL[~~(Math.random()*COL.length)],dc:.001+Math.random()*.001});
+  (function loop(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    if(Math.random()<.1)ps.push(sp());
+    ps=ps.filter(p=>p.op>0);
+    ps.forEach(p=>{ctx.globalAlpha=p.op;ctx.fillStyle=p.col;ctx.font=`${p.sz}px Arial`;ctx.fillText(p.sym,p.x,p.y);p.x+=p.vx;p.y+=p.vy;p.op-=p.dc;});
+    ctx.globalAlpha=1;requestAnimationFrame(loop);
+  })();
+})();
+
+/* ════ SCROLL REVEAL ════ */
+(()=>{
+  const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}}),{threshold:.14});
+  document.querySelectorAll('.reveal,.memory-card,.flip-card').forEach(el=>io.observe(el));
+})();
+
+/* ════ TYPING ════ */
+(()=>{
+  const el=document.getElementById('typed-text');
+  const msg=document.getElementById('message-body');
+  const phrase='Dear Future Preksha...';
+  let i=0;
+  const type=()=>{if(i<phrase.length){el.textContent+=phrase[i++];setTimeout(type,95);}else setTimeout(()=>msg.classList.add('visible'),700);};
+  const io=new IntersectionObserver(entries=>{if(entries[0].isIntersecting){io.disconnect();setTimeout(type,500);}},{threshold:.3});
+  io.observe(document.getElementById('message-section'));
+})();
+
+/* ════ LOVE LETTER ════ */
+(()=>{
+  const env      = document.getElementById('envelope');
+  const modal    = document.getElementById('letter-modal');
+  const modalBg  = document.getElementById('letter-modal-bg');
+  const closeBtn = document.getElementById('letter-close');
+  const hint     = document.getElementById('env-hint');
+
+  const openModal = () => {
+    env.classList.add('opened');
+    hint.textContent = '💌 Click to close';
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      env.classList.remove('opened');
+      hint.textContent = '✉️ Click to open';
+    }, 400);
+  };
+
+  env.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', e => { e.stopPropagation(); closeModal(); });
+  modalBg.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+})();
+
+/* ════ CAROUSEL ════ */
+(()=>{
+  const track=document.getElementById('carousel-track');
+  const items=[...track.querySelectorAll('.polaroid')];
+  const N=items.length;
+  let cur=0,timer;
+  const ITEM_W=264;
+
+  const goTo=n=>{
+    cur=((n%N)+N)%N;
+    const perView=Math.max(1,Math.floor(track.parentElement.offsetWidth/ITEM_W));
+    const max=Math.max(0,N-perView);
+    track.style.transform=`translateX(-${Math.min(cur,max)*ITEM_W}px)`;
+  };
+
+  items.forEach(p=>p.addEventListener('click',()=>{
+    document.getElementById('lightbox-img').src=p.dataset.src;
+    document.getElementById('lightbox').classList.add('active');
+    document.body.style.overflow='hidden';
+  }));
+
+  const resetTimer=()=>{clearInterval(timer);timer=setInterval(()=>goTo(cur+1),3200);};
+  document.getElementById('car-prev').addEventListener('click',()=>{goTo(cur-1);resetTimer();});
+  document.getElementById('car-next').addEventListener('click',()=>{goTo(cur+1);resetTimer();});
+
+  goTo(0);
+  timer=setInterval(()=>goTo(cur+1),3200);
+  window.addEventListener('resize',()=>goTo(cur));
+})();
+
+/* ════ LIGHTBOX ════ */
+(()=>{
+  const lb=document.getElementById('lightbox');
+  const close=()=>{lb.classList.remove('active');document.body.style.overflow='';};
+  document.getElementById('lightbox-close').addEventListener('click',close);
+  lb.addEventListener('click',e=>{if(e.target===lb)close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+})();
+
+/* ════ FLIP CARDS ════ */
+(()=>{
+  const data=[
+    {num:'01',em:'😄',r:'Your infectious laughter',s:'It lights up every room instantly'},
+    {num:'02',em:'💝',r:'The way you care',s:'Your heart is endlessly generous'},
+    {num:'03',em:'🌸',r:'Your beautiful smile',s:'It can brighten the darkest day'},
+    {num:'04',em:'💪',r:'Your strength & grace',s:'You face every challenge head-on'},
+    {num:'05',em:'✨',r:'You light up spaces',s:'Everywhere you go feels warmer'},
+    {num:'06',em:'🎨',r:'Your creativity',s:'You make everything more beautiful'},
+    {num:'07',em:'🌟',r:'Your kind heart',s:'Kindness flows naturally from you'},
+    {num:'08',em:'🤗',r:'Making others feel seen',s:'You have a true gift for this'},
+    {num:'09',em:'🌺',r:'Your adventurous spirit',s:'Life with you is never boring'},
+    {num:'10',em:'📚',r:'Your wisdom',s:'So much depth for your years'},
+    {num:'11',em:'🔥',r:'You never give up',s:'Your persistence is inspiring'},
+    {num:'12',em:'❤️',r:'Simply being YOU',s:'The world\'s most wonderful you'},
+  ];
+  const grid=document.getElementById('flip-grid');
+  data.forEach(d=>{
+    const c=document.createElement('div');
+    c.className='flip-card';
+    c.innerHTML=`<div class="flip-inner"><div class="flip-front"><div class="flip-num">${d.num}</div><div class="flip-tap">tap to reveal</div></div><div class="flip-back"><div class="flip-emoji">${d.em}</div><div class="flip-reason">${d.r}</div><div class="flip-sub">${d.s}</div></div></div>`;
+    c.addEventListener('click',()=>c.classList.toggle('flipped'));
+    grid.appendChild(c);
+  });
+})();
+
+/* ════ COUNTDOWN ════ */
+(()=>{
+  const tick=()=>{
+    const now=new Date();
+    let bd=new Date(now.getFullYear(),3,4);
+    if(now>bd)bd=new Date(now.getFullYear()+1,3,4);
+    const d=bd-now;
+    if(d<=0){document.getElementById('countdown-display').style.display='none';document.getElementById('bday-now').style.display='block';return;}
+    document.getElementById('cd-days').textContent=String(~~(d/86400000)).padStart(2,'0');
+    document.getElementById('cd-hours').textContent=String(~~((d%86400000)/3600000)).padStart(2,'0');
+    document.getElementById('cd-mins').textContent=String(~~((d%3600000)/60000)).padStart(2,'0');
+    document.getElementById('cd-secs').textContent=String(~~((d%60000)/1000)).padStart(2,'0');
+  };
+  tick();setInterval(tick,1000);
+})();
+
+/* ════ CONFETTI ════ */
+(()=>{
+  const cv=document.getElementById('confetti-canvas');
+  const ctx=cv.getContext('2d');
+  let pcs=[],running=false;
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  window.addEventListener('resize',()=>{cv.width=window.innerWidth;cv.height=window.innerHeight;});
+  const COLS=['#f4a0b5','#c9b8e8','#f7c5a0','#e8799b','#d4a853','#f9c8d9','#b8e8d0','#a0c4f4'];
+  const burst=(x,y)=>{
+    for(let i=0;i<180;i++) pcs.push({x:x||cv.width/2+(Math.random()-.5)*200,y:y||cv.height*.3,vx:(Math.random()-.5)*14,vy:-(5+Math.random()*12),sz:5+Math.random()*10,col:COLS[~~(Math.random()*COLS.length)],g:.4,dc:.01,op:1,r:Math.random()*360,sp:(Math.random()-.5)*10});
+  };
+  const loop=()=>{
+    if(!running)return;
+    ctx.clearRect(0,0,cv.width,cv.height);
+    pcs=pcs.filter(p=>p.op>.04);
+    pcs.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.globalAlpha=p.op;ctx.fillStyle=p.col;ctx.fillRect(-p.sz/2,-p.sz/4,p.sz,p.sz/2);ctx.restore();p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.vx*=.99;p.op-=p.dc;p.r+=p.sp;});
+    if(!pcs.length){running=false;ctx.clearRect(0,0,cv.width,cv.height);}else requestAnimationFrame(loop);
+  };
+  window.launchConfetti=()=>{running=true;burst();setTimeout(()=>burst(),300);setTimeout(()=>burst(),620);loop();};
+})();
+
+/* ════ FIREWORKS ════ */
+(()=>{
+  const cv=document.getElementById('confetti-canvas');
+  const ctx=cv.getContext('2d');
+  let fws=[],running2=false;
+  const FWCOLS=['#f4a0b5','#c9b8e8','#f7c5a0','#ffe44d','#e8799b','#7ee8fa','#ff8a65','#a5ffd6'];
+
+  const explode=(x,y)=>{
+    const col=FWCOLS[~~(Math.random()*FWCOLS.length)];
+    for(let i=0;i<70;i++){const a=(i/70)*Math.PI*2,sp=3+Math.random()*6;fws.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,col,op:1,dc:.014+Math.random()*.01,sz:2+Math.random()*3,trail:[]});}
+  };
+  const loop2=()=>{
+    if(!running2)return;
+    ctx.fillStyle='rgba(254,246,240,.14)';ctx.fillRect(0,0,cv.width,cv.height);
+    fws=fws.filter(p=>p.op>.04);
+    fws.forEach(p=>{
+      p.trail.push({x:p.x,y:p.y});if(p.trail.length>5)p.trail.shift();
+      p.trail.forEach((t,i)=>{ctx.globalAlpha=(i/p.trail.length)*p.op*.5;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(t.x,t.y,p.sz*.5,0,Math.PI*2);ctx.fill();});
+      ctx.globalAlpha=p.op;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.sz,0,Math.PI*2);ctx.fill();
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.08;p.vx*=.97;p.op-=p.dc;
+    });
+    ctx.globalAlpha=1;
+    if(!fws.length){running2=false;ctx.clearRect(0,0,cv.width,cv.height);}else requestAnimationFrame(loop2);
+  };
+  window.launchFireworks=()=>{
+    running2=true;
+    let t=0;
+    const iv=setInterval(()=>{
+      explode(cv.width*(.2+Math.random()*.6),cv.height*(.1+Math.random()*.45));
+      if(++t>=10)clearInterval(iv);
+    },220);
+    loop2();
+  };
+})();
+
+/* ════ MUSIC ════ */
+(()=>{
+  const audio=document.getElementById('bg-music');
+  audio.volume=.3;
+  let playing=false;
+  let pausedByVideo=false;
+
+  window._musicPlay=()=>{audio.play().then(()=>{playing=true;}).catch(()=>{});};
+  window._musicPause=()=>{audio.pause();playing=false;};
+  window._musicPlaying=()=>playing;
+
+  /* Auto-start on first user interaction */
+  document.addEventListener('click',function tryAuto(){
+    if(!playing) window._musicPlay();
+    document.removeEventListener('click',tryAuto);
+  },{once:true});
+
+  /* Pause when any video is clicked, resume when clicking outside */
+  document.querySelectorAll('.video-wrapper').forEach(wrapper=>{
+    wrapper.addEventListener('click',()=>{
+      if(window._musicPlaying()){
+        window._musicPause();
+        pausedByVideo=true;
+      }
+    });
+  });
+  document.addEventListener('click',e=>{
+    if(pausedByVideo && !e.target.closest('.video-wrapper') && !e.target.closest('.video-card')){
+      window._musicPlay();
+      pausedByVideo=false;
+    }
+  });
+})();
+
+/* ════ LOCK SCREEN ════ */
+(()=>{
+  // TEST TIME: 1 minute from page load
+  const now=new Date();
+  const UNLOCK=new Date(now.getTime()+60000);
+
+  const lockScreen=document.getElementById('lock-screen');
+  const mainContent=document.getElementById('main-content');
+  const lkH=document.getElementById('lk-hours');
+  const lkM=document.getElementById('lk-mins');
+  const lkS=document.getElementById('lk-secs');
+
+  /* floating particles */
+  const cv=document.getElementById('lock-particles-canvas');
+  const ctx2=cv.getContext('2d');
+  const resize=()=>{cv.width=window.innerWidth;cv.height=window.innerHeight;};
+  resize();window.addEventListener('resize',resize);
+  const SYM=['♥','✦','✿','❀','·','✧','♡'];
+  const COL=['#f4a0b5','#c9b8e8','#f7c5a0','#e8799b','#f9c8d9','#d4b8f0'];
+  let lkPts=[];
+  const lpSp=()=>({x:Math.random()*cv.width,y:cv.height+20,vx:(Math.random()-.5)*.8,vy:-(0.6+Math.random()*1.2),sz:12+Math.random()*20,op:.4+Math.random()*.5,sym:SYM[~~(Math.random()*SYM.length)],col:COL[~~(Math.random()*COL.length)],dc:.0008+Math.random()*.001});
+  (function lpLoop(){
+    if(!lockScreen.classList.contains('unlocked')){ctx2.clearRect(0,0,cv.width,cv.height);if(Math.random()<.08)lkPts.push(lpSp());lkPts=lkPts.filter(p=>p.op>0);lkPts.forEach(p=>{ctx2.globalAlpha=p.op;ctx2.fillStyle=p.col;ctx2.font=`${p.sz}px Arial`;ctx2.fillText(p.sym,p.x,p.y);p.x+=p.vx;p.y+=p.vy;p.op-=p.dc;});ctx2.globalAlpha=1;}
+    requestAnimationFrame(lpLoop);
+  })();
+
+  const unlock=()=>{
+    lockScreen.classList.add('unlocked');
+    mainContent.style.display='block';
+    setTimeout(()=>mainContent.classList.add('revealed'),80);
+    setTimeout(()=>lockScreen.remove(),1600);
+    window._musicPlay&&window._musicPlay();
+  };
+
+  const tick=()=>{
+    const diff=UNLOCK-new Date();
+    if(diff<=0){unlock();return;}
+    const h=Math.floor(diff/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    lkH.textContent=String(h).padStart(2,'0');
+    lkM.textContent=String(m).padStart(2,'0');
+    lkS.textContent=String(s).padStart(2,'0');
+  };
+
+  if(new Date()>=UNLOCK){
+    lockScreen.style.display='none';
+    mainContent.style.display='block';
+    mainContent.classList.add('revealed');
+  } else {
+    mainContent.style.display='none';
+    tick();
+    setInterval(tick,1000);
+  }
+})();
+
+/* ════ SURPRISE ════ */
+document.getElementById('surprise-btn').addEventListener('click',function(){
+  document.getElementById('surprise-msg').classList.add('active');
+  this.style.display='none';
+});
+</script>
+</body>
+</html>
