@@ -750,23 +750,20 @@ window.addEventListener('scroll',()=>{document.getElementById('progress-bar').st
   window._musicPause=()=>{audio.pause();playing=false;};
   window._musicPlaying=()=>playing;
 
-  /* Auto-start on first user interaction */
-  document.addEventListener('click',function tryAuto(){
-    if(!playing) window._musicPlay();
-    document.removeEventListener('click',tryAuto);
-  },{once:true});
-
-  /* Pause when any video is clicked, resume when clicking outside */
-  document.querySelectorAll('.video-wrapper').forEach(wrapper=>{
-    wrapper.addEventListener('click',()=>{
-      if(window._musicPlaying()){
+  /* Track which iframe is focused to detect video clicks */
+  window.addEventListener('blur',()=>{
+    const active=document.activeElement;
+    if(active&&active.tagName==='IFRAME'&&active.closest('.video-wrapper')){
+      setTimeout(()=>{
         window._musicPause();
         pausedByVideo=true;
-      }
-    });
+      },100);
+    }
   });
+
+  /* Resume music when user clicks anywhere outside video cards */
   document.addEventListener('click',e=>{
-    if(pausedByVideo && !e.target.closest('.video-wrapper') && !e.target.closest('.video-card')){
+    if(pausedByVideo&&!e.target.closest('.video-card')){
       window._musicPlay();
       pausedByVideo=false;
     }
