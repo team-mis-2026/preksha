@@ -775,9 +775,9 @@ window.addEventListener('scroll',()=>{document.getElementById('progress-bar').st
 
 /* ════ LOCK SCREEN ════ */
 (()=>{
-  // Unlock at midnight April 4th
+  // TEST: 30 seconds from page load
   const now=new Date();
-  const UNLOCK=new Date(now.getFullYear(),3,4,0,0,0);
+  const UNLOCK=new Date(now.getTime()+30000);
 
   const lockScreen=document.getElementById('lock-screen');
   const mainContent=document.getElementById('main-content');
