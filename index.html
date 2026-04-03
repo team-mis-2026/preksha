@@ -283,6 +283,7 @@ footer .hearts{font-size:20px;letter-spacing:6px;}
 .lock-cd-lbl{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-mid);}
 .lock-hint{font-size:12px;color:var(--text-mid);letter-spacing:.5px;animation:pulse 2s infinite;}
 .lock-hint .lock-date{color:var(--rose);font-weight:600;}
+.lock-tap{font-size:11px;color:var(--text-mid);margin-top:10px;opacity:.6;letter-spacing:.5px;}
 .lock-particles-canvas{position:absolute;inset:0;pointer-events:none;}
 #main-content{opacity:0;transition:opacity 1.2s ease .3s;}
 #main-content.revealed{opacity:1;}
@@ -332,6 +333,7 @@ footer .hearts{font-size:20px;letter-spacing:6px;}
       <div class="lock-cd-box"><span class="lock-cd-num" id="lk-secs">--</span><span class="lock-cd-lbl">Seconds</span></div>
     </div>
     <p class="lock-hint">🔒 Full surprise reveals on <span class="lock-date">4th April at 12:00 AM</span></p>
+    <p class="lock-tap">Tap anywhere to enable sound 🔊</p>
   </div>
 </div>
 
@@ -750,22 +752,36 @@ window.addEventListener('scroll',()=>{document.getElementById('progress-bar').st
   window._musicPause=()=>{audio.pause();playing=false;};
   window._musicPlaying=()=>playing;
 
-  /* Track which iframe is focused to detect video clicks */
-  window.addEventListener('blur',()=>{
-    const active=document.activeElement;
-    if(active&&active.tagName==='IFRAME'&&active.closest('.video-wrapper')){
-      setTimeout(()=>{
-        window._musicPause();
-        pausedByVideo=true;
-      },100);
-    }
+  /* Prime audio on first tap so autoplay works at unlock */
+  document.addEventListener('click',function prime(){
+    audio.play().then(()=>{audio.pause();audio.currentTime=0;}).catch(()=>{});
+  },{once:true});
+
+  /* Add click overlay on each video to detect play */
+  document.querySelectorAll('.video-wrapper').forEach(wrapper=>{
+    const overlay=document.createElement('div');
+    overlay.style.cssText='position:absolute;inset:0;z-index:10;cursor:pointer;';
+    wrapper.style.position='relative';
+    wrapper.appendChild(overlay);
+
+    overlay.addEventListener('click',()=>{
+      /* Pause music */
+      window._musicPause();
+      pausedByVideo=true;
+      /* Remove overlay so next click goes to iframe */
+      overlay.style.display='none';
+    });
   });
 
-  /* Resume music when user clicks anywhere outside video cards */
+  /* Restore overlays and resume music when clicking outside video cards */
   document.addEventListener('click',e=>{
-    if(pausedByVideo&&!e.target.closest('.video-card')){
-      window._musicPlay();
-      pausedByVideo=false;
+    if(!e.target.closest('.video-card')){
+      if(pausedByVideo){
+        window._musicPlay();
+        pausedByVideo=false;
+      }
+      /* Re-add overlays */
+      document.querySelectorAll('.video-wrapper div[style*="inset:0"]').forEach(o=>o.style.display='');
     }
   });
 })();
