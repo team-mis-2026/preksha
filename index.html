@@ -317,6 +317,7 @@ footer .hearts{font-size:20px;letter-spacing:6px;}
 
 <!-- FIXED CONTROLS -->
 <div class="fixed-controls">
+  <button id="music-btn" class="ctrl-btn" title="Play/Pause Music">🎵</button>
 </div>
 
 <!-- ═══════════ LOCK SCREEN ═══════════ -->
@@ -744,18 +745,18 @@ window.addEventListener('scroll',()=>{document.getElementById('progress-bar').st
 /* ════ MUSIC ════ */
 (()=>{
   const audio=document.getElementById('bg-music');
+  const btn=document.getElementById('music-btn');
   audio.volume=.3;
   let playing=false;
   let pausedByVideo=false;
 
-  window._musicPlay=()=>{audio.play().then(()=>{playing=true;}).catch(()=>{});};
-  window._musicPause=()=>{audio.pause();playing=false;};
-  window._musicPlaying=()=>playing;
+  window._musicPlay=()=>{audio.play().then(()=>{playing=true;btn.textContent='⏸';}).catch(()=>{});};
+  window._musicPause=()=>{audio.pause();playing=false;btn.textContent='🎵';};
 
-  /* Prime audio on first tap so autoplay works at unlock */
-  document.addEventListener('click',function prime(){
-    audio.play().then(()=>{audio.pause();audio.currentTime=0;}).catch(()=>{});
-  },{once:true});
+  /* Toggle on button click */
+  btn.addEventListener('click',()=>{
+    playing?window._musicPause():window._musicPlay();
+  });
 
   /* Add click overlay on each video to detect play */
   document.querySelectorAll('.video-wrapper').forEach(wrapper=>{
@@ -763,24 +764,16 @@ window.addEventListener('scroll',()=>{document.getElementById('progress-bar').st
     overlay.style.cssText='position:absolute;inset:0;z-index:10;cursor:pointer;';
     wrapper.style.position='relative';
     wrapper.appendChild(overlay);
-
     overlay.addEventListener('click',()=>{
-      /* Pause music */
-      window._musicPause();
-      pausedByVideo=true;
-      /* Remove overlay so next click goes to iframe */
+      if(playing){window._musicPause();pausedByVideo=true;}
       overlay.style.display='none';
     });
   });
 
-  /* Restore overlays and resume music when clicking outside video cards */
+  /* Resume music and restore overlays when clicking outside video cards */
   document.addEventListener('click',e=>{
     if(!e.target.closest('.video-card')){
-      if(pausedByVideo){
-        window._musicPlay();
-        pausedByVideo=false;
-      }
-      /* Re-add overlays */
+      if(pausedByVideo){window._musicPlay();pausedByVideo=false;}
       document.querySelectorAll('.video-wrapper div[style*="inset:0"]').forEach(o=>o.style.display='');
     }
   });
